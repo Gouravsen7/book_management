@@ -1,9 +1,10 @@
 class BooksController < ApplicationController
   before_action :set_book, only: %i[show edit update destroy]
+  before_action :find_authors, only: %i[create ]
 
   # GET /books or /books.json
   def index
-    @books = Book.page(params[:page]).per(4)
+    @books = Book.page(params[:page]).per(50)
     respond_to do |format|
       format.html { @books }
       format.json { render(json: @books, status: :ok) }
@@ -11,7 +12,8 @@ class BooksController < ApplicationController
   end
 
   # GET /books/1 or /books/1.json
-  def show; end
+  def show
+  end
 
   # GET /books/new
   def new
@@ -24,7 +26,9 @@ class BooksController < ApplicationController
   # POST /books or /books.json
   def create
     @book = Book.new(book_params)
-
+    @authors.each do |author|
+      @book.authors << author
+    end
     respond_to do |format|
       if @book.save
         format.html { redirect_to book_url(@book), notice: 'Book was successfully created.' }
@@ -39,7 +43,8 @@ class BooksController < ApplicationController
   # PATCH/PUT /books/1 or /books/1.json
   def update
     respond_to do |format|
-      if @book.update(book_params)
+      @book = Book.new.update_books(@book, @authors, book_params)
+      if @book.save!
         format.html { redirect_to book_url(@book), notice: 'Book was successfully updated.' }
         format.json { render :show, status: :ok, location: @book }
       else
@@ -61,13 +66,19 @@ class BooksController < ApplicationController
 
   private
 
+  def find_authors
+    author_ids = params[:book][:author_ids].reject(&:empty?)
+    @authors = Author.where(id: author_ids)
+  end
+
   # Use callbacks to share common setup or constraints between actions.
   def set_book
     @book = Book.find(params[:id])
+    find_authors if params[:book].present? && [:author_ids].present?
   end
 
   # Only allow a list of trusted parameters through.
   def book_params
-    params.require(:book).permit(:author_id, :name, :edition, :publication_year)
+    params.require(:book).permit(:name, :edition, :publication_year)
   end
 end
