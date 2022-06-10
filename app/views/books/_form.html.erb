@@ -28,7 +28,9 @@
 
   <div class="field">
     <%= form.label :author_name %>
-    <%= form.collection_select :author_id, Author.order(:name), :id,:name, include_blank: true %>  
+    <%= form.collection_select :author_ids, Author.order(:name), 
+                        :id, :name, { include_blank: true },
+                         { multiple: true } %>
   </div>
 
   <div class="actions">

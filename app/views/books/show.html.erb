@@ -12,8 +12,8 @@
   <%= @book.publication_year %>
 </p>
 <p>
-  <strong>Author Name:</strong>
-  <%= @book.author.try(:name) %>
+  <strong>Authors Name:</strong>
+  <%= @book.authors.pluck(:name).join(' , ') %>
 </p>
 
 <%= link_to 'Edit', edit_book_path(@book) %> |

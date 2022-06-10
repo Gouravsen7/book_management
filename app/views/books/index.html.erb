@@ -16,15 +16,17 @@
 
   <tbody>
     <% @books.each do |book| %>
-      <tr>
-        <td><%= book.name %></td>
-        <td><%= book.edition %></td>
-        <td><%= book.publication_year %></td>
-        <td><%= book.author.try(:name) %></td>
-        <td><%= link_to 'Show', book %></td>
-        <td><%= link_to 'Edit', edit_book_path(book) %></td>
-        <td><%= link_to 'Destroy', book, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
+      <% book.authors.each do |author|%>
+        <tr>
+          <td><%= book.name %></td>
+          <td><%= book.edition %></td>
+          <td><%= book.publication_year %></td>
+          <td><%= author.try(:name) %></td>
+          <td><%= link_to 'Show', book %></td>
+          <td><%= link_to 'Edit', edit_book_path(book) %></td>
+          <td><%= link_to 'Destroy', book, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        </tr>
+      <% end %>
     <% end %>
   </tbody>
 </table>
